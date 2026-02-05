@@ -1,5 +1,4 @@
 from src.pipeline.train_pipeline import model_pipeline
-import mlflow
 import pandas as pd
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.linear_model import LogisticRegression
