@@ -25,7 +25,7 @@ def _model_mapper(search_grid:List[dict]) -> List[dict]:
     
     return new_grid
         
-def model_trainer(train_config: dict, X:pd.DataFrame):
+def model_trainer(train_config: dict):
     kfold = StratifiedKFold(
         n_splits=train_config['cv']['n_splits'], 
         shuffle=True,
