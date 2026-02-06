@@ -43,15 +43,14 @@ def model_pipeline(
     """
 
     transformer = _scaler_mapper(scale_feature=scale_feature, ignore_features=ignore_features)
-    transformer.append(('categorical', OneHotEncoder(sparse_output=False), categorical_features))
-    transformer.append(('drop_features', 'drop', ignore_features))
+    transformer.append(('categorical', OneHotEncoder(sparse_output=True), categorical_features))
+    if ignore_features:
+        transformer.append(('drop_features', 'drop', ignore_features))
 
     column_scaler = ColumnTransformer(
         transformers=transformer, 
         remainder="passthrough"
     )
-
-    column_scaler.set_output(transform="pandas")
 
     pipeline = Pipeline([
         ('preprocessor', DataPreprocessor(categorical_features=categorical_features, numerical_features=numerical_features)),
