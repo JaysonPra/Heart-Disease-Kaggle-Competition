@@ -17,6 +17,7 @@ data/
 
 # MLFlow
 mlflow.db
+mlruns/
 
 # Models
 models/
