@@ -44,6 +44,7 @@ def model_pipeline(
 
     transformer = _scaler_mapper(scale_feature=scale_feature, ignore_features=ignore_features)
     transformer.append(('categorical', OneHotEncoder(sparse_output=False), categorical_features))
+    transformer.append(('drop_features', 'drop', ignore_features))
 
     column_scaler = ColumnTransformer(
         transformers=transformer, 
@@ -54,8 +55,8 @@ def model_pipeline(
 
     pipeline = Pipeline([
         ('preprocessor', DataPreprocessor(categorical_features=categorical_features, numerical_features=numerical_features)),
-        ('scaler', column_scaler),
         ('feature_engineering', FeatureEngineer()),
+        ('scaler', column_scaler),
         ('classifier', LogisticRegression()) # Placeholder
     ])
 
