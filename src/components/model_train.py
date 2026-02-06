@@ -1,6 +1,7 @@
 from src.pipeline.train_pipeline import model_pipeline
 import pandas as pd
-from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import HalvingRandomSearchCV, StratifiedKFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
@@ -18,7 +19,7 @@ def _model_mapper(search_grid:List[dict]) -> List[dict]:
         model = entry.copy()
         if 'classifier' in model:
             model['classifier'] = [
-                model_map.get(model_name) for model_name in entry['classifier'] 
+                model_map.get(model_name)() for model_name in entry['classifier'] 
                 if model_name in model_map
             ]
         new_grid.append(model)
@@ -40,12 +41,17 @@ def model_trainer(train_config: dict):
     )
 
     param_grid = _model_mapper(search_grid=train_config['search_grid'])
-    grid_search = GridSearchCV(
+    grid_search = HalvingRandomSearchCV(
         estimator=pipeline,
-        param_grid=param_grid,
-        scoring=train_config['scoring'],
+        param_distributions=param_grid,
+        n_candidates=train_config['cv']['n_candidates'],
+        factor=train_config['cv']['factor'],
+        min_resources=train_config['cv']['min_resources'],
+        scoring=train_config["scoring"],
         n_jobs=-1,
-        cv=kfold
+        cv=kfold,
+        verbose=3,
+        random_state=42
     )
 
     return grid_search
