@@ -6,8 +6,17 @@ dist/
 wheels/
 *.egg-info
 
+# Data Files
+data/
+
 # Environment
 .env
 
 # Virtual environments
 .venv
+
+# MLFlow
+mlflow.db
+
+# Models
+models/
