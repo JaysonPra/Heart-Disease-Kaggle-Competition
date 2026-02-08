@@ -1,0 +1,52 @@
+experiment:
+  name: "Heart Disease Prediction"
+  run_name: "Feature Engineer v1"
+  description: ""
+
+cv:
+  n_splits: 5
+  n_candidates: 30
+  factor: 2
+  min_resources: "smallest"
+
+feature:
+  ignore: ["id", "BP", "FBS over 120", "Cholesterol"]
+  numerical:
+    [
+      "Age",
+      "BP",
+      "Cholesterol",
+      "Max HR",
+      "ST depression",
+      "Number of vessels fluro",
+      "Slope of ST",
+    ]
+  categorical:
+    [
+      "Chest pain type",
+      "FBS over 120",
+      "EKG results",
+      "Exercise angina",
+      "Thallium",
+    ]
+
+scaler:
+  "standard": ["Age", "Max HR", "Number of vessels fluro", "Slope of ST"]
+  "robust": ["BP", "Cholesterol", "ST depression"]
+
+search_grid:
+  - classifier: ["logistic_regression"]
+    classifier__C: [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+    classifier__solver: ["liblinear"]
+    classifier__max_iter: [1000]
+    classifier__penalty: ["l1", "l2"]
+    classifier__class_weight: ["balanced"]
+
+  - classifier: ["xgboost"]
+    classifier__n_estimators: [100, 300, 500, 1000]
+    classifier__learning_rate: [0.001, 0.01, 0.1, 0.2]
+    classifier__max_depth: [3, 4, 5, 6]
+    classifier__tree_method: ["hist"]
+    classifier__random_state: [42]
+
+scoring: "roc_auc"

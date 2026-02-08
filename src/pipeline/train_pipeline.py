@@ -41,15 +41,19 @@ def model_pipeline(
     Returns:
         Pipeline: Pipeline Object for training
     """
+    active_categorical = [f for f in categorical_features if f not in ignore_features]
 
     transformer = _scaler_mapper(scale_feature=scale_feature, ignore_features=ignore_features)
-    transformer.append(('categorical', OneHotEncoder(sparse_output=True), categorical_features))
+
+    if active_categorical:
+        transformer.append(('categorical', OneHotEncoder(sparse_output=True), active_categorical))
+    
     if ignore_features:
         transformer.append(('drop_features', 'drop', ignore_features))
 
     column_scaler = ColumnTransformer(
         transformers=transformer, 
-        remainder="passthrough"
+        remainder="drop"
     )
 
     pipeline = Pipeline([
