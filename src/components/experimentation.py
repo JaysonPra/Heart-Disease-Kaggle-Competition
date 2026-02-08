@@ -1,6 +1,8 @@
 import matplotlib
 matplotlib.use('agg')
 import mlflow
+import os
+import tempfile
 import yaml
 import pandas as pd
 import numpy as np
@@ -50,7 +52,6 @@ def run_experiment(config_file_location):
     with open(config_file_location, 'r') as f:
         config_file = yaml.safe_load(f)
 
-
     mlflow.set_experiment(config_file['experiment']['name'])
     with mlflow.start_run(
         run_name=config_file['experiment']['run_name'],
@@ -71,8 +72,11 @@ def run_experiment(config_file_location):
 
         importance_df = _log_feature_importance(best_pipeline=best_estimator)
         if not importance_df.empty:
-            importance_df.to_csv("feature_importance.csv", index=False)
-            mlflow.log_artifact("feature_importance.csv")
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_path = os.path.join(temp_dir, "feature_importance.csv")
+                importance_df.to_csv(temp_path, index=False)
+                
+                mlflow.log_artifact(temp_path)
 
         mlflow.log_params(grid_search.best_params_)
 
