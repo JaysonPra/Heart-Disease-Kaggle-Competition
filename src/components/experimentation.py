@@ -50,8 +50,10 @@ def run_experiment(config_file_location):
     with open(config_file_location, 'r') as f:
         config_file = yaml.safe_load(f)
 
+
+    mlflow.set_experiment(config_file['experiment']['name'])
     with mlflow.start_run(
-        run_name=config_file['experiment']['name'],
+        run_name=config_file['experiment']['run_name'],
         description=config_file['experiment']['description']
     ):
         mlflow.sklearn.autolog(
@@ -73,7 +75,12 @@ def run_experiment(config_file_location):
             mlflow.log_artifact("feature_importance.csv")
 
         mlflow.log_params(grid_search.best_params_)
-        mlflow.log_metric("best_cv_score", grid_search.best_score_)
+
+        mlflow.sklearn.log_model(
+            sk_model=best_estimator,
+            artifact_path="model",
+            input_example=X.iloc[:5]
+        )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Heart Disease Prediction")
