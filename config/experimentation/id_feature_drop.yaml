@@ -1,7 +1,7 @@
 experiment:
   name: "Heart Disease Prediction"
-  run_name: "Random Search Experiment"
-  description: "Changed GridSearch to Halving Random Search"
+  run_name: "Feature ID Dropped"
+  description: "ID dropped"
 
 cv:
   n_splits: 5
@@ -10,7 +10,7 @@ cv:
   min_resources: "smallest"
 
 feature:
-  ignore: []
+  ignore: ["id"]
   numerical:
     [
       "Age",
