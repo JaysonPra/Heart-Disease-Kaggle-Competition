@@ -1,5 +1,6 @@
 import fastapi
 from pydantic import BaseModel, Field, ConfigDict
+from config.config import PROCESSED_DATA_DIR
 from typing import Literal
 from src.pipeline.train_pipeline import model_pipeline
 from mlflow import MlflowClient
@@ -73,3 +74,23 @@ def predict(data: PatientData):
     result = "Presence" if prediction == 1 else "Absence"
 
     return {"prediction": result}
+
+@app.post("/bulkpredict")
+def bulkpredict(data: str):
+    df = pd.read_csv(data)
+
+    features = df.drop(columns=['id'])
+
+    probabilities = model.predict_proba(features)[:, 1]
+
+    output_df = pd.DataFrame({
+        "id": df["id"],
+        "Heart Disease": probabilities
+    })
+
+    prediction_file = PROCESSED_DATA_DIR / "result.csv"
+    output_df.to_csv(prediction_file, index=False)
+
+    return {
+        "status": "success",
+    }
