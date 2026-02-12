@@ -25,7 +25,7 @@ A full-stack ML pipeline to predict Heart Disease for the Kaggle Competition pla
 - To use classes for Preprocessing, and Feature Engineering
 - To switch between Grid Search and Random Search
 
-Directory structure:
+## Directory structure:
 
 ```
 └── Kaggle Heart Disease Competition/
