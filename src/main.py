@@ -2,12 +2,9 @@ import fastapi
 from pydantic import BaseModel, Field, ConfigDict
 from config.config import PROCESSED_DATA_DIR
 from typing import Literal
-from src.pipeline.train_pipeline import model_pipeline
 from mlflow import MlflowClient
 import mlflow
 import pandas as pd
-
-mlflow.set_tracking_uri("http://localhost:5000")
 
 app = fastapi.FastAPI()
 
@@ -39,6 +36,7 @@ def load_champion_model():
         print("Champion model loaded successfully")
     except Exception as e:
         print(f"Model failed to load: {e}")
+        model = None
 
 def promote_to_champion(run_id: str):
     MODEL_NAME = "Heart-Disease-Prediction"
