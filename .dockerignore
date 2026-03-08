@@ -1,0 +1,12 @@
+# Source Code
+src/components/
+src/pipeline/
+
+# Experimentation Config Files
+config/experimentation
+
+# Misc
+__pycache__
+
+# Secret
+.env
